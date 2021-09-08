@@ -1,10 +1,13 @@
 from fastapi import FastAPI, Request, Response
+from fastapi.staticfiles import StaticFiles
 from database.core import database
 from routing import routes
 
 app = FastAPI(title="Graph Find")
 
 app.include_router(routes)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.on_event("startup")
