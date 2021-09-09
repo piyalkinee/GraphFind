@@ -1,3 +1,3 @@
 from .core import Base
 
-from modules.generator.models import VertexDB
+from modules.data.models import VertexDB, EdgeDB

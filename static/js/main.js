@@ -3,7 +3,7 @@ function getGraphData(json) {
     var edgesFormatedList = [];
 
     for (let i = 0; i < json.vertices.length; i++) {
-        nodesFormatedList.push({ id: json.vertices[i].id, label: json.vertices[i].name });
+        nodesFormatedList.push({ id: json.vertices[i].id, label: json.vertices[i].id + ":" + json.vertices[i].name });
     }
 
     for (let i = 0; i < json.edges.length; i++) {
@@ -13,6 +13,7 @@ function getGraphData(json) {
     var nodes = new vis.DataSet(nodesFormatedList);
 
     var edges = new vis.DataSet(edgesFormatedList)
+
 
     var container = document.getElementById("mynetwork");
     var data = {
