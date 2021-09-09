@@ -1,8 +1,39 @@
-html{
+html {
     max-height: 100%;
     background-color: rgb(37, 37, 37);
 }
 
-.work-area{
+.work-area {
     background-color: rgb(77, 77, 77);
+}
+
+.controll-panel {
+    /*position*/
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 42%;
+    right: 42%;
+    top: 20px;
+    z-index: 1000;
+    /*size*/
+    min-width: 400px;
+    min-height: 50px;
+    /*display*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*background*/
+    background-color: rgb(37, 37, 37);
+    border-radius: 8px;
+}
+
+button {
+    height: 25px;
+    width: 120px;
+    border: none;
+    border-radius: 4px;
+    background-color: rgb(88, 88, 88);
+    color: white;
+    font-weight: 700;
 }

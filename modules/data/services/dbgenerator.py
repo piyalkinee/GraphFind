@@ -11,7 +11,6 @@ async def create_graph_for_sql(iterations_count: int):
     buffer_vertex_to_create: dict = {}
 
     for iteration in range(iterations_count):
-        print(vertex_to_create)
         for vertex_key in vertex_to_create:
             
             for vertex_value in vertex_to_create[vertex_key]:
