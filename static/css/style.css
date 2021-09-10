@@ -1,3 +1,7 @@
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
 html {
     max-height: 100%;
     background-color: rgb(37, 37, 37);
@@ -28,7 +32,65 @@ html {
     border-radius: 8px;
 }
 
+.search-panel {
+    /*position*/
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 42%;
+    right: 42%;
+    top: 220px;
+    z-index: 1000;
+    /*size*/
+    min-width: 400px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    /*background*/
+    background-color: rgb(37, 37, 37);
+    border-radius: 8px;
+}
+
+.search-panel div {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.settings-panel {
+    /*position*/
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 42%;
+    right: 42%;
+    top: 80px;
+    z-index: 1000;
+    /*size*/
+    min-width: 400px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    /*background*/
+    background-color: rgb(37, 37, 37);
+    border-radius: 8px;
+}
+
+.settings-panel div {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
 button {
+    margin-left: 8px;
+    margin-right: 8px;
     height: 25px;
     width: 120px;
     border: none;
@@ -36,4 +98,31 @@ button {
     background-color: rgb(88, 88, 88);
     color: white;
     font-weight: 700;
+}
+
+span {
+    color: white;
+}
+
+input {
+    text-align: center;
+    font-weight: 700;
+}
+
+.path-input {
+    margin: 5px;
+    width: 80px;
+}
+
+.exit-button {
+    height: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.exit-button button {
+    margin-left: 80%;
+    height: 30px;
+    width: 30px;
 }
