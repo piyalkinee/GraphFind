@@ -1,4 +1,4 @@
-from database.core import database, DB_NAME
+from database.core import database_sql, DB_NAME
 
 
 def format_graph(edges):
@@ -60,7 +60,7 @@ async def dfs_in_mysql(start, end):
     )
     SELECT * FROM pathfind ORDER BY path;
     """
-    return [dict(d) for d in await database.fetch_all(querry)]
+    return [dict(d) for d in await database_sql.fetch_all(querry)]
 
 
 async def bfs_in_mysql(start, end):
@@ -77,4 +77,4 @@ async def bfs_in_mysql(start, end):
     )
     SELECT * FROM pathfind ORDER BY level;
     """
-    return [dict(d) for d in await database.fetch_all(querry)]
+    return [dict(d) for d in await database_sql.fetch_all(querry)]

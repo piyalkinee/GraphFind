@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
-from database.core import database
+from database.core import database_sql, neo4j_driver
 from routing import routes
 
 app = FastAPI(title="Graph Find")
@@ -11,13 +11,18 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.on_event("startup")
-async def startup():
-    await database.connect()
+async def startup_mysql():
+    await database_sql.connect()
 
 
 @app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
+async def shutdown_mysql():
+    await database_sql.disconnect()
+
+
+@app.on_event("shutdown")
+async def shutdown_neo4j():
+    await neo4j_driver.close()
 
 
 @app.middleware("http")
