@@ -1,22 +1,37 @@
-from database.core import database_sql, DB_NAME
+from database.core import database_sql, connect_neo4j, DB_NAME
 
 
 async def get_vertices():
-    querry = f"SELECT * FROM {DB_NAME}.vertices LIMIT 0, 10000"
-    return [dict(d) for d in await database_sql.fetch_all(querry)]
+    query = f"SELECT * FROM {DB_NAME}.vertices LIMIT 0, 10000"
+    return [dict(d) for d in await database_sql.fetch_all(query)]
 
 
 async def get_edges():
-    querry = f"SELECT * FROM {DB_NAME}.edges LIMIT 0, 10000"
-    return [dict(d) for d in await database_sql.fetch_all(querry)]
+    query = f"SELECT * FROM {DB_NAME}.edges LIMIT 0, 10000"
+    return [dict(d) for d in await database_sql.fetch_all(query)]
 
 
 async def delete_vertices():
-    querry = f"TRUNCATE `{DB_NAME}`.`vertices`;"
-    await database_sql.execute(querry)
+    query = f"TRUNCATE `{DB_NAME}`.`vertices`;"
+    await database_sql.execute(query)
+
 
 async def delete_edges():
-    querry = f"TRUNCATE `{DB_NAME}`.`edges`;"
-    await database_sql.execute(querry)
+    query = f"TRUNCATE `{DB_NAME}`.`edges`;"
+    await database_sql.execute(query)
 
 
+async def delete_neo4j():
+    session = connect_neo4j()
+
+    query = f"""
+        CALL gds.graph.list
+        """
+    responce = session.run(query)
+
+    if f"{DB_NAME}_graph" in str(responce.single()):
+        query = f"CALL gds.graph.drop('{DB_NAME}_graph') YIELD graphName;"
+        session.run(query)
+
+    query = f"MATCH (n:vertex) DETACH DELETE n"
+    session.run(query)

@@ -11,18 +11,14 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.on_event("startup")
-async def startup_mysql():
+async def startup():
     await database_sql.connect()
 
 
 @app.on_event("shutdown")
-async def shutdown_mysql():
+async def shutdown():
     await database_sql.disconnect()
-
-
-@app.on_event("shutdown")
-async def shutdown_neo4j():
-    await neo4j_driver.close()
+    neo4j_driver.close()
 
 
 @app.middleware("http")

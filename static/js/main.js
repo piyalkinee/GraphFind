@@ -28,11 +28,15 @@ function getGraphData(json) {
 
 function getNewGraph() {
     ajax("DELETE", "Graph/DeleteGraphData", null)
+    console.log("Graph/DELETE")
     ajax("POST", "Graph/CreateGraph?vertex_count=" + iterationCount, null)
-
-    setTimeout(function() {
-        ajax("GET", "Graph/GetGraphData", getGraphData)
-    }, 1000)
+    console.log("Graph/POST")
+    ajax("DELETE", "Graph/DeleteGraphDataForNeo4j", null)
+    console.log("GraphNeo4j/DELETE")
+    ajax("POST", "Graph/CreateGraphForNeo4j", null)
+    console.log("GraphNeo4j/POST")
+    ajax("GET", "Graph/GetGraphData", getGraphData)
+    console.log("Graph/GET")
 }
 
 function search() {
@@ -43,11 +47,15 @@ function search() {
     document.getElementById("bfs-memory").innerHTML = "loading"
     document.getElementById("dfs-sql").innerHTML = "loading"
     document.getElementById("bfs-sql").innerHTML = "loading"
+    document.getElementById("dfs-neo4j").innerHTML = "loading"
+    document.getElementById("bfs-neo4j").innerHTML = "loading"
 
     ajax("GET", "Search/Ram/DepthFirst?start=" + startID + "&end=" + endID, updateDFSmemory)
     ajax("GET", "Search/Ram/BreadthFirst?start=" + startID + "&end=" + endID, updateBFSmemory)
     ajax("GET", "Search/MySQL/DepthFirst?start=" + startID + "&end=" + endID, updateDFSsql)
     ajax("GET", "Search/MySQL/BreadthFirst?start=" + startID + "&end=" + endID, updateBFSsql)
+    ajax("GET", "Search/Neo4j/DepthFirst?start=" + startID + "&end=" + endID, updateDFSneo4j)
+    ajax("GET", "Search/Neo4j/BreadthFirst?start=" + startID + "&end=" + endID, updateBFSneo4j)
 }
 
 function updateDFSmemory(data) {
@@ -72,6 +80,18 @@ function updateBFSsql(data) {
     console.log("BFSsql")
     console.log(data)
     document.getElementById("bfs-sql").innerHTML = data.time
+}
+
+function updateDFSneo4j(data) {
+    console.log("DFSneo4j")
+    console.log(data)
+    document.getElementById("dfs-neo4j").innerHTML = data.time
+}
+
+function updateBFSneo4j(data) {
+    console.log("BFSneo4j")
+    console.log(data)
+    document.getElementById("bfs-neo4j").innerHTML = data.time
 }
 
 ajax("GET", "Graph/GetGraphData", getGraphData)

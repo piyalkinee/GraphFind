@@ -19,4 +19,4 @@ metadata = MetaData()
 
 
 def connect_neo4j():
-    return neo4j_driver.session()
+    return neo4j_driver.session(database="graphdb")

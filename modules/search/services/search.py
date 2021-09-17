@@ -1,4 +1,4 @@
-from database.core import database_sql, DB_NAME
+from database.core import database_sql, connect_neo4j, DB_NAME
 
 
 def format_graph(edges):
@@ -11,35 +11,40 @@ def format_graph(edges):
     return formated_graph
 
 
-async def dfs_in_ram(formated_graph, start, end, path, visited=set()):
-    path.append(start)
-    visited.add(start)
-    if start == end:
-        return path
-    for neighbour in formated_graph[start]:
-        if neighbour not in visited:
-            result = await dfs_in_ram(formated_graph, neighbour, end, path, visited)
-            if result is not None:
-                return result
-            path.pop()
-    return None
+async def dfs_in_ram(formated_graph: dict, start, end):
+
+    queue = []
+
+    queue.append([start])
+    while queue:
+
+        path = queue.pop(-1)
+
+        node = path[-1]
+
+        if node == end:
+            return path
+
+        for adjacent in formated_graph.get(node, []):
+            new_path = list(path)
+            new_path.append(adjacent)
+            queue.append(new_path)
 
 
 def bfs_in_ram(formated_graph, start, end):
-    # maintain a queue of paths
+
     queue = []
-    # push the first path into the queue
+
     queue.append([start])
     while queue:
-        # get the first path from the queue
+
         path = queue.pop(0)
-        # get the last node from the path
+
         node = path[-1]
-        # path found
+
         if node == end:
             return path
-        # enumerate all adjacent nodes, construct a
-        # new path and push it into the queue
+
         for adjacent in formated_graph.get(node, []):
             new_path = list(path)
             new_path.append(adjacent)
@@ -47,7 +52,7 @@ def bfs_in_ram(formated_graph, start, end):
 
 
 async def dfs_in_mysql(start, end):
-    querry = f"""
+    query = f"""
     WITH RECURSIVE pathfind AS
     (
     SELECT from_id, CAST(from_id AS CHAR(500)) AS path
@@ -60,11 +65,11 @@ async def dfs_in_mysql(start, end):
     )
     SELECT * FROM pathfind ORDER BY path;
     """
-    return [dict(d) for d in await database_sql.fetch_all(querry)]
+    return [dict(d) for d in await database_sql.fetch_all(query)]
 
 
 async def bfs_in_mysql(start, end):
-    querry = f"""
+    query = f"""
     WITH RECURSIVE pathfind AS
     (
     SELECT from_id, 1 as level
@@ -77,4 +82,56 @@ async def bfs_in_mysql(start, end):
     )
     SELECT * FROM pathfind ORDER BY level;
     """
-    return [dict(d) for d in await database_sql.fetch_all(querry)]
+    return [dict(d) for d in await database_sql.fetch_all(query)]
+
+
+async def dfs_in_neo4j(start, end):
+    session = connect_neo4j()
+
+    check_graph_list(session)
+
+    query = """
+    CALL gds.alpha.dfs.stream('[*DBNAME*]', {startNode:[*START*],targetNodes:[[*END*]]})
+    YIELD path
+    UNWIND [ n in nodes(path) | n.name ] AS names
+    RETURN names
+    """
+
+    query = query.replace("[*DBNAME*]", str(DB_NAME+"_graph"))
+    query = query.replace("[*START*]", str(start))
+    query = query.replace("[*END*]", str(end))
+
+    session.run(query)
+
+
+async def bfs_in_neo4j(start, end):
+    session = connect_neo4j()
+
+    check_graph_list(session)
+
+    query = """
+    CALL gds.alpha.bfs.stream('[*DBNAME*]', {startNode:[*START*],targetNodes:[[*END*]]})
+    YIELD path
+    UNWIND [ n in nodes(path) | n.tag ] AS names
+    RETURN names
+    """
+
+    query = query.replace("[*DBNAME*]", str(DB_NAME+"_graph"))
+    query = query.replace("[*START*]", str(start))
+    query = query.replace("[*END*]", str(end))
+
+    session.run(query)
+
+
+def check_graph_list(session):
+
+    query = f"""
+        CALL gds.graph.list
+        """
+    responce = session.run(query)
+
+    if f"{DB_NAME}_graph" not in str(responce.single()):
+        query = f"""
+        CALL gds.graph.create('{DB_NAME}_graph', 'vertex', 'PARENT')
+        """
+        session.run(query)

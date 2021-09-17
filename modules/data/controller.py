@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from .services.dbgenerator import create_graph_for_sql, create_graph_for_neo4j
-from .services.data import get_vertices, get_edges, delete_vertices, delete_edges
+from .services.data import get_vertices, get_edges, delete_vertices, delete_edges, delete_neo4j
 from modules.search.services.search import format_graph
 
 routes = APIRouter(prefix="/Graph", tags=["Graph"])
@@ -40,5 +40,13 @@ async def create_graph_for_neo4j_with_data():
     formated_graph: dict = format_graph(await get_edges())
 
     await create_graph_for_neo4j(formated_graph)
+
+    return {"status": "ok"}
+
+
+@routes.delete("/DeleteGraphDataForNeo4j", status_code=204)
+async def delete_graph_data():
+
+    await delete_neo4j()
 
     return {"status": "ok"}

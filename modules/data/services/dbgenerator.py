@@ -35,6 +35,10 @@ async def create_graph_for_neo4j(formated_graph: dict):
     for vertex in formated_graph:
         query += f'(ver_{vertex}:vertex' + '{name:"' + str(vertex) + '"}),'
 
+    for vertex_key in formated_graph:
+        for vertex_value in formated_graph[vertex_key]:
+            query += F"(ver_{vertex_key})-[:PARENT]->(ver_{vertex_value}),"
+
     query = query[:-1]
 
     session = connect_neo4j()
