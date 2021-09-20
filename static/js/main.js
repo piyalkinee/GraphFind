@@ -22,7 +22,9 @@ function getGraphData(json) {
         nodes: nodes,
         edges: edges,
     };
-    var options = {};
+    var options = {
+        layout: { improvedLayout: false }
+    };
     var network = new vis.Network(container, data, options);
 }
 

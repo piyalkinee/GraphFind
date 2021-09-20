@@ -115,11 +115,11 @@ async def bfs_in_neo4j(start, end):
     UNWIND [ n in nodes(path) | n.tag ] AS names
     RETURN names
     """
-
+    
     query = query.replace("[*DBNAME*]", str(DB_NAME+"_graph"))
     query = query.replace("[*START*]", str(start))
     query = query.replace("[*END*]", str(end))
-
+    print(query)
     session.run(query)
 
 
